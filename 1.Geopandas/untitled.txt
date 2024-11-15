@@ -1,0 +1,63 @@
+so I have mapped country capitals and centroids on the same folium map:
+
+# Map with capitals sized by capPop
+import folium
+from folium import Popup, CircleMarker
+from folium import Circle
+from shapely.geometry import Point
+
+# Center of the map (choose appropriate coordinates for your map)
+map_center = [20, 0]  # Adjust as needed
+m = folium.Map(location=map_center, zoom_start=2)
+
+# Loop through each row in the DataFrame to add markers
+for idx, row in countries_gdf.iterrows():
+    if isinstance(row['capLoc'], Point):  # Ensure geometry is a Point
+        # Extract latitude and longitude from the geometry column
+        lat, lon = row['capLoc'].y, row['capLoc'].x
+        
+        # Create the popup text
+        tooltip_text = f"""
+            <b>Country:</b> {row['COUNTRY']}<br>
+            <b>Capital:</b> {row['Capital']}<br>
+            <b>Population:</b> {int(population):,}
+        """
+        
+        # Add a circle marker with a tooltip to the map
+        CircleMarker(
+            location=(lat, lon),
+            radius=3,
+            color='blue',
+            fill=True,
+            fill_color='blue',
+            fill_opacity=0.6,
+            tooltip=tooltip_text
+        ).add_to(m)
+
+# Loop through each row in the DataFrame to add markers
+for idx, row in countries_gdf.iterrows():
+    if isinstance(row['centroid'], Point):  # Ensure geometry is a Point
+        # Extract latitude and longitude from the geometry column
+        lat, lon = row['centroid'].y, row['centroid'].x
+        
+        # Create the popup text
+        tooltip_text = f"""
+            {row['COUNTRY']} centroid<br>
+        """
+        
+        # Add a circle marker with a tooltip to the map
+        CircleMarker(
+            location=(lat, lon),
+            radius=3,
+            color='red',
+            fill=True,
+            fill_color='red',
+            fill_opacity=0.6,
+            tooltip=tooltip_text
+        ).add_to(m)
+
+# Display the map
+m
+
+
+Now I would like to add a column to countries_gdf with the distance between the country's centroid 
